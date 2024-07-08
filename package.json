@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/AndreGeoPhysics/nodejs-learn/issues"
   },
-  "homepage": "https://github.com/AndreGeoPhysics/nodejs-learn#readme"
+  "homepage": "https://github.com/AndreGeoPhysics/nodejs-learn#readme",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
 }
