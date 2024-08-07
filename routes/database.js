@@ -12,7 +12,12 @@ const pool = new Pool({
 });
 
 router.post('/users', function(req, res, next) {
-	pool.query(`INSERT INTO master.users (name, is_admin) VALUES ('${req.body.nama}', ${req.body.isAdmin}) RETURNING id; `, (error, results) => {
+	var user = req.body.user
+	var admin = false
+	if (req.body.isAdmin === 'isAdmin'){
+		admin = true
+	} 
+	pool.query(`INSERT INTO master.users (name, is_admin) VALUES ('${user}', ${admin}) RETURNING id; `, (error, results) => {
 		if (error) {
 		throw error
 		}
@@ -46,8 +51,18 @@ router.get('/users', function(req, res, next) {
 		if (error) {
 		throw error
 		}
-		var result = results.rows
-		res.send(result);
+		var data = results.rows
+		var tableResult = "<tr><th>ID</th><th>Nama</th><th>Admin</th></tr>"
+		for (var i = 0; i < data.length; i++) {
+  			var tableRow = '<tr>';
+			tableRow += `<td>${data[i]['id']}</td>`
+  			tableRow += `<td>${data[i]['name']}</td>`
+			tableRow += `<td>${data[i]['is_admin']}</td>`
+  			tableRow += '<tr>';
+  			tableResult+= tableRow
+		}
+		tableFinish = `<table>${tableResult}</table>`
+		res.send(tableFinish);
 	})
 });
 
