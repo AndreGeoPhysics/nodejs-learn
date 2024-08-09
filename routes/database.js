@@ -13,10 +13,7 @@ const pool = new Pool({
 
 router.post('/users', function(req, res, next) {
 	var user = req.body.user
-	var admin = false
-	if (req.body.isAdmin === 'isAdmin'){
-		admin = true
-	} 
+	var admin = req.body.isAdmin
 	pool.query(`INSERT INTO master.users (name, is_admin) VALUES ('${user}', ${admin}) RETURNING id; `, (error, results) => {
 		if (error) {
 		throw error
@@ -25,10 +22,11 @@ router.post('/users', function(req, res, next) {
 	})
 });
 
-router.patch('/users', function(req, res, next) {
-	nama = req.body.nama
-	update_string = req.body.isAdmin
-	pool.query(`UPDATE master.users SET is_admin = ${update_string} WHERE name = '${nama}' RETURNING id; `, (error, results) => {
+router.patch('/users/:id', function(req, res, next) {
+	const id = req.params.id
+	const nama = req.body.nama
+	const update_string = req.body.isAdmin
+	pool.query(`UPDATE master.users SET is_admin = ${update_string}, name = '${nama}' WHERE id = ${id} RETURNING id; `, (error, results) => {
 		if (error) {
 		throw error
 		}
@@ -36,7 +34,7 @@ router.patch('/users', function(req, res, next) {
 	})
 });
 
-router.delete('/users', function(req, res, next) {
+router.delete('/users/:id', function(req, res, next) {
 	nama = req.body.nama
 	pool.query(`DELETE FROM master.users WHERE name = '${nama}' RETURNING id; `, (error, results) => {
 		if (error) {
@@ -52,13 +50,14 @@ router.get('/users', function(req, res, next) {
 		throw error
 		}
 		var data = results.rows
-		var tableResult = "<tr><th>ID</th><th>Nama</th><th>Admin</th></tr>"
+		var tableResult = "<tr><th>ID</th><th>Nama</th><th>Admin</th><th></th></tr>"
 		for (var i = 0; i < data.length; i++) {
   			var tableRow = '<tr>';
 			tableRow += `<td>${data[i]['id']}</td>`
   			tableRow += `<td>${data[i]['name']}</td>`
 			tableRow += `<td>${data[i]['is_admin']}</td>`
-  			tableRow += '<tr>';
+			tableRow += `<td><div class="dropdown"><button class="dropbtn">Opsi</button><div class="dropdown-content"><a onclick="edit('${data[i]['id']}')">edit</a><a onclick="delete('${data[i]['id']}')">delete</a></div></div></td>`
+  			tableRow += '</tr>';
   			tableResult+= tableRow
 		}
 		tableFinish = `<table>${tableResult}</table>`
