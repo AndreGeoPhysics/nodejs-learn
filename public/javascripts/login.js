@@ -6,9 +6,30 @@ function hostname() {
     return `${protocol}://${location.hostname}:3000`
 };
 
-function sendtoServer(){
-    var form = document.getElementById('createUser');
-    console.log(form)
+function create(){
+    var dialog = document.getElementById("dialogEditUser")
+    var close = document.getElementById("exitEdit").addEventListener("click",()=>{
+        dialog.close()
+    })
+    dialog.showModal()
+}
+
+function edit(id){
+    var table = document.getElementById("userTable").querySelector("table")
+    var user = document.getElementById("userEdit")
+    var admin = document.getElementById("isAdminEdit")
+    for (i=1;i<table.rows.length;i++){
+        if (table.rows[i].cells[0].innerHTML === id){            
+            user.value = table.rows[i].cells[1].innerHTML
+            admin.value = table.rows[i].cells[2].innerHTML
+        }
+    }
+    var dialog = document.getElementById("dialogEditUser")
+    var close = document.getElementById("exitEdit").addEventListener("click",()=>{
+        dialog.close()
+    })
+    dialog.showModal()
+
     // var response = await axios.post(hostname + '/db/users', {
     //     headers: {}
     // })
